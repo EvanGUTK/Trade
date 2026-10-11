@@ -41,9 +41,10 @@
       "Bash(git push origin +*)",
       "Bash(git reset --hard:*)",
       "Bash(rm -rf /*)",
+      "Read(./data/**)",
       "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./data/**)"
+      "Read(./.env.local)",
+      "Read(./.env.*.local)"
     ]
   }
 }

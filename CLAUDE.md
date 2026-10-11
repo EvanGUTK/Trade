@@ -27,8 +27,9 @@ directory-level `CLAUDE.md` inherits this file and may only tighten its rules.
 4. **The Trader is a separate Claude.** It has its own process, system prompt,
    memory directory, and journal. It never shares context with the development
    Claude Code session that builds this repo. Its memory is data, not instructions.
-5. **No secrets in git.** Keys live in `.env` (gitignored). `.env.example` documents
-   every variable. CI must pass with no secrets set.
+5. **No secrets in git.** Keys live in `.env` or `.env.local` (gitignored and
+   denied to Claude by `.claude/settings.json`). `.env.example` documents every
+   variable and holds no values. CI must pass with no secrets set.
 6. **Only the chief merges to `main`.** Workers commit to their own branch in their
    own worktree and push it. See §5 and `docs/WORKFLOW.md`.
 7. **WeBull look, not WeBull brand.** We copy the layout, density, and dark palette.
