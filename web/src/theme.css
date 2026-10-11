@@ -1,0 +1,129 @@
+/*
+ * Trade design tokens. The dark, dense broker look: layered navy surfaces, thin
+ * borders, blue for primary actions, green up / red down. Every colour, size and
+ * font in the app comes from here; feature CSS files use the variables only.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces, darkest to lightest. Each layer sits on the one before it. */
+  --bg-0: #0b0e11; /* app canvas */
+  --bg-1: #141a1f; /* panels and columns */
+  --bg-2: #1b232b; /* raised: cards, inputs, table headers */
+  --bg-3: #232d37; /* hover and selected rows */
+
+  /* Lines */
+  --border: #262f38;
+  --border-strong: #334049;
+
+  /* Text */
+  --text: #e6edf3;
+  --text-muted: #8b98a5;
+  --text-faint: #5c6873;
+
+  /* Semantic colour. Never the only signal: pair with an arrow, sign, or label. */
+  --accent: #3b8bff; /* primary actions, links, selected tab */
+  --accent-hover: #5a9dff;
+  --accent-soft: rgb(59 139 255 / 0.16);
+  --up: #1fbf75; /* price up, buy, long */
+  --up-soft: rgb(31 191 117 / 0.16);
+  --down: #f0525f; /* price down, sell, short */
+  --down-soft: rgb(240 82 95 / 0.16);
+  --warn: #f5b63e;
+  --focus: #7fb3ff;
+
+  /* Typography. Data is 12–13px with tabular numerals so columns do not jitter. */
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-lg: 15px;
+  --fs-xl: 20px;
+  --lh: 1.35;
+
+  /* Spacing and shape */
+  --gap-1: 4px;
+  --gap-2: 8px;
+  --gap-3: 12px;
+  --gap-4: 16px;
+  --radius: 4px;
+  --row-h: 28px;
+
+  /* Layout */
+  --col-left: 240px;
+  --col-right: 300px;
+  --topbar-h: 40px;
+  --tabs-h: 32px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  line-height: var(--lh);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 0 var(--gap-2);
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.up {
+  color: var(--up);
+}
+
+.down {
+  color: var(--down);
+}
+
+.muted {
+  color: var(--text-muted);
+}
