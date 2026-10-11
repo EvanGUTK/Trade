@@ -5,7 +5,7 @@ and several worker Claude agents, each in its own git worktree and its own Panes
 pane. It is binding. The root `CLAUDE.md` §5 summarizes it; this file has the exact
 commands.
 
-Repo: `git@github.com:EvanGUTK/Trade.git` (remote `origin`, default branch `main`).
+Repo: `https://github.com/EvanGUTK/Trade.git` (remote `origin`, default branch `main`).
 Worktrees live under `.worktrees/` inside the repo (gitignored).
 
 ## 1. Roles
