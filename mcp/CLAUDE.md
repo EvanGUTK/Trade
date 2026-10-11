@@ -36,8 +36,8 @@ mcp/
 
 Same toolchain as the other Python components (root CLAUDE.md §4): Python 3.14, uv 0.12,
 ruff 0.17, mypy 2.4 strict with the pydantic plugin, pytest 9 with `asyncio_mode = "auto"`.
-`uv sync` installs everything. CI's `python` job (`astral-sh/setup-uv@v6`,
-`actions/setup-python@v5` 3.14) runs `make mcp-setup && make mcp-check && make mcp-test`.
+`uv sync` installs everything. There is no hosted CI (ADR 0005): run
+`make mcp-check && make mcp-test` before every push; the chief reruns them in review.
 
 **SDK version matters.** The locked `mcp` is 2.x. In 2.x the high-level server class is
 `mcp.server.MCPServer`; `FastMCP` was its 1.x name and `import mcp.server.fastmcp` now
@@ -227,7 +227,7 @@ subclasses from tools; they are protocol errors.
 
 ## 11. Definition of done
 
-- [ ] `make check` and `make test` pass in `mcp/`; CI's `python` job is green.
+- [ ] `make check` and `make test` pass in `mcp/`.
 - [ ] Every new tool: closed schemas, annotations, five test assertions, §5.1 row, one commit.
 - [ ] Any gateway API change is reflected in `docs/ARCHITECTURE.md` in the same commit.
 - [ ] No network in tests; no `print`; no secrets in logs.

@@ -55,10 +55,8 @@ Cross-feature code goes in `components/`, `store/`, or `api/`, never in another 
 | prettier                                | 3.9.x                | single quotes, 100 cols, trailing commas                                     |
 | zustand / lightweight-charts / @dnd-kit | 5.0 / 5.2 / 6.3+10.0 | state / candlestick+volume (`addSeries(CandlestickSeries, …)`) / kanban drag |
 
-Setup: `cd web && make setup`. CI (`.github/workflows/ci.yml`, job `web`): `pnpm/action-setup@v4`
-(`version: 12`), `actions/setup-node@v4` (`node-version: 24`, `cache: pnpm`,
-`cache-dependency-path: web/pnpm-lock.yaml`), then `make web-setup && make web-check && make web-test`.
-Do not add a `packageManager` field to package.json: `pnpm/action-setup` errors when both are set.
+Setup: `cd web && make setup`. There is no hosted CI (ADR 0005): run `make check && make test && make build`
+before every push; the chief reruns them in review.
 
 Environment (all optional; root `.env` is Vite's `envDir`):
 
@@ -327,7 +325,7 @@ Rules:
 
 ## 13. Definition of done (web change)
 
-- [ ] `make check`, `make test`, `make build` pass in `web/` (CI runs the first two).
+- [ ] `make check`, `make test`, `make build` pass in `web/`.
 - [ ] Visual change: screenshot at 1440px in the report (`make dev` or `vite preview`).
 - [ ] Types in `api/types.ts` match the gateway; any §4 gap is proposed, not patched around.
 - [ ] No hex colours, font names, or brand assets outside `theme.css`; no `any`.
@@ -344,4 +342,4 @@ Rules:
   dnd-kit drag with confirmation and rollback, owner badges, Trader notes and pending
   proposals, strategy source viewer (`GET /strategies/{id}/versions`), run status.
 - **Phase 3** — XP toasts, season banner, leaderboard panel, achievements; Playwright
-  smoke suite in CI; tablet drawer for the watchlist.
+  smoke suite run by the chief in review; tablet drawer for the watchlist.

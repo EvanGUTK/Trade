@@ -46,9 +46,8 @@ strategies/
 | pytest 9 | `uv.lock` | `asyncio_mode = "auto"` (pytest-asyncio) |
 
 Build backend is `uv_build`; the module lives in `src/trade_strategies` and ships `py.typed`.
-CI (`.github/workflows/ci.yml`, job `python`) uses `astral-sh/setup-uv@v6` and
-`actions/setup-python@v5` with 3.14, then runs `make strategies-setup && make
-strategies-check && make strategies-test`. Run exactly that locally before pushing.
+There is no hosted CI (ADR 0005): run `make strategies-check && make strategies-test`
+before every push; the chief reruns them in review.
 
 ## 4. Commands
 
@@ -254,7 +253,7 @@ ctx = RecordingContext(); ctx.run(SmaCross(), synthetic_series()); print(ctx.ord
 
 ## 12. Definition of done
 
-- [ ] `make check` and `make test` pass in `strategies/`; CI's `python` job is green.
+- [ ] `make check` and `make test` pass in `strategies/`.
 - [ ] No `float`, no wall clock, no network, no `open()` in `src/` strategy paths.
 - [ ] New wire fields appear in `sdk.py`, `docs/ARCHITECTURE.md` §3/§5, and this file in one commit.
 - [ ] New lint rule: implementation, test, and the §7 table row in one commit.

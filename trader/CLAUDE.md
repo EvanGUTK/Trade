@@ -41,9 +41,9 @@ trader/
 
 ## 3. Toolchain and setup
 
-Same toolchain as the other Python components (root §4). `uv sync`; CI's `python` job
-(`astral-sh/setup-uv@v6`, `actions/setup-python@v5` 3.14) runs `make trader-setup &&
-make trader-check && make trader-test` with **no secrets set**. Tests never call the API.
+Same toolchain as the other Python components (root §4). `uv sync`. There is no hosted
+CI (ADR 0005): run `make trader-check && make trader-test` with **no secrets set** before
+every push; the chief reruns them in review. Tests never call the API.
 
 Locked SDK: `anthropic` 1.13. It is built on `httpx2`; if you touch HTTP types, write
 `import httpx2 as httpx`. Verify any SDK name against the installed package under
@@ -252,7 +252,7 @@ to `messages` after the last user message; do not edit `system`.
 
 ## 11. Definition of done
 
-- [ ] `make check` and `make test` pass in `trader/` with no `.env`; CI's `python` job is green.
+- [ ] `make check` and `make test` pass in `trader/` with no `.env`.
 - [ ] No test or import path can reach the Anthropic API without a key present by design.
 - [ ] SDK calls match root §7 and the skill files; deviations are recorded in an ADR.
 - [ ] Prompt, journal body, or memory layout changes update §5 of this file in the same commit.
