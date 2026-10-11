@@ -59,7 +59,11 @@ Types: `Portfolio {cash_micro, equity_micro, positions: [{symbol, qty_micro, avg
 
 Fill rules (v0): market orders fill at the bar's open of the *next* bar plus slippage;
 limit orders fill if the bar's range crosses the limit, at the limit price; stops
-trigger on the range then fill as market. No partial fills in v0. Shorting allowed
+trigger when the range crosses the stop, then fill as market at the next bar's open
+plus slippage. `day` orders expire at the first bar whose UTC date differs from the
+acceptance bar; `gtc` persists. Commission per fill is
+`max(per_share_micro × shares, min_micro)` in exact micro arithmetic. No partial
+fills in v0. Shorting allowed
 with 100% margin requirement. Rejections: insufficient cash/margin, unknown symbol,
 qty <= 0, market closed (engine does not know calendars in v0; gateway filters).
 
@@ -71,6 +75,16 @@ reproduces the final portfolio exactly.
 
 Base `http://localhost:8787/api/v1`. JSON. Errors are `{error: {code, message}}`
 with proper HTTP status. Auth: none in Phase 0–2 (localhost only).
+
+Error codes (`GatewayError` in `gateway/`): `bad_request` 400, `not_found` 404,
+`method_not_allowed` 405, `engine_down` 503, `provider` 502, `config` / `io` /
+`internal` 500. Order `status` values: `accepted | rejected | open | filled |
+cancelled | expired`. Bar and quote prices are `*_micro` integers;
+`GET /quote/{symbol}` returns `{symbol, t, bid_micro, ask_micro, last_micro}`.
+Kanban column wire ids are snake_case: `backlog research backtest paper_live review
+retired promoted`. A card may carry `pending_move: {to_column, proposed_by, note}`
+for a Trader proposal awaiting human confirmation; the UI shows Confirm / Reject and
+only a human `PATCH` clears it.
 
 | Method & path | Purpose |
 |---|---|
@@ -90,9 +104,13 @@ with proper HTTP status. Auth: none in Phase 0–2 (localhost only).
 | `GET /strategies`, `POST /strategies`, `GET /strategies/{id}/versions` | strategy source registry |
 | `GET /game/profile`, `GET /game/leaderboard`, `GET /game/season` | game layer |
 
-WebSocket `ws://localhost:8787/ws`. Client sends `{type: "subscribe", topics: [...]}`.
+WebSocket `ws://localhost:8787/ws`. Client sends `{type: "subscribe", topics: [...]}`
+or `{type: "unsubscribe", topics: [...]}`.
 Topics: `quotes:{symbol}`, `bars:{symbol}:{tf}`, `session:{id}` (fills, marks, order
-updates), `board`, `runs:{id}`. Server messages: `{type, topic, t, payload}`.
+updates), `board`, `runs:{id}`. Server messages: `{type, topic, t, payload}` with
+`type` ∈ `subscribed | unsubscribed | bar | quote | fill | mark | order | card | run |
+lagged | error`. Broadcast channels are bounded; a client that falls behind receives
+`lagged {dropped: n}` and must resubscribe and backfill over REST.
 
 ## 5. Strategy runner protocol (runner ↔ gateway)
 
@@ -121,7 +139,9 @@ an import allowlist (`math`, `statistics`, `collections`, `dataclasses`, `numpy`
 ## 6. MCP tool surface (`mcp/`)
 
 Tool names are `namespace.verb`. Inputs/outputs are JSON Schema with
-`additionalProperties: false`. Every tool is read-only unless marked **W**.
+`additionalProperties: false`. Every tool is read-only unless marked **W**. The
+server is `mcp.server.MCPServer` from the official `mcp` SDK 2.x (its 1.x name was
+FastMCP). A `health` tool exists from Phase 0.
 
 | Tool | Purpose |
 |---|---|
@@ -139,7 +159,7 @@ Resources: `trade://board`, `trade://sessions/{id}`, `trade://strategies/{id}@{v
 
 ## 7. The Trader: memory and journal
 
-- **Identity**: own process in `trader/`, own system prompt (`trader/prompts/system.md`),
+- **Identity**: own process in `trader/`, own system prompt (`trader/src/trade_trader/prompts/system.md`, package data),
   own API key, model `claude-opus-5-5`, adaptive thinking, effort `high` for strategy
   writing and `medium` for routine reviews.
 - **Journal** (structured, SQLite, written through `journal.write`): one row per
@@ -182,7 +202,7 @@ Resources: `trade://board`, `trade://sessions/{id}`, `trade://strategies/{id}@{v
 | gateway | 8787 | `make gateway-run` / `make dev` |
 | engine | stdio | gateway |
 | web (Vite) | 5173 | `make web-dev` / `make dev` |
-| mcp (http) | 8788 | `make mcp-run` (stdio mode via `make mcp-stdio`) |
+| mcp | stdio, or 8788 for HTTP | `make mcp-run` (stdio), `make mcp-run-http` (HTTP on `TRADE_MCP_PORT`), `make mcp-stdio` alias |
 | strategy runner | — | gateway on `POST /runs`, or `make strategies-run` |
 | trader | — | `make trader-run` (propose) / `make trader-review` (post-mortem) |
 
