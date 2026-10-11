@@ -49,7 +49,6 @@ directory-level `CLAUDE.md` inherits this file and may only tighten its rules.
 | `web/` | TypeScript (React 19, Vite) | WeBull-style UI: charts, watchlist, order ticket, positions, and the kanban strategy board. | `web/CLAUDE.md` |
 | `docs/` | Markdown | Architecture, workflow, ADRs. | `docs/CLAUDE.md` |
 | `.claude/` | JSON, Markdown | Claude Code settings and worker agent definitions. | this file |
-| `.github/workflows/` | YAML | CI: one job per component, path-filtered. | this file |
 
 Runtime state (`data/`), worktrees (`.worktrees/`), and `.env` are gitignored.
 
@@ -121,7 +120,9 @@ make trader-*       # trader-test trader-fmt trader-run trader-review
 make web-*          # web-test web-fmt web-dev web-build
 ```
 
-`make check && make test` must pass before any push. CI runs the same targets.
+`make check && make test` must pass before any push. There is no hosted CI by
+decision (ADR 0005): the chief runs the same targets while reviewing a branch
+(`scripts/review-branch.sh`), and that review is the merge gate.
 
 ---
 
@@ -256,7 +257,7 @@ Only `trader/` calls the Anthropic API. Rules that apply there (verified against
 
 ## 10. Roadmap phases
 
-- **Phase 0 (now)**: this file, `docs/`, component CLAUDE.md files, minimal buildable scaffolds, CI, workflow proven end to end through Panes.
+- **Phase 0 (now)**: this file, `docs/`, component CLAUDE.md files, minimal buildable scaffolds, workflow proven end to end through Panes.
 - **Phase 1**: engine ledger + fills, gateway with Yahoo history + bar cache + WS, web chart + order ticket + positions, one example strategy, backtest end to end.
 - **Phase 2**: MCP server, the Trader with journal + memory + post-mortem loop, kanban board wired to real cards.
 - **Phase 3**: game layer (XP, seasons, achievements, leaderboard), extra providers, Playwright smoke suite.

@@ -210,4 +210,5 @@ Runtime data under `./data` (gitignored): `trade.db`, `bars/`, `events/`, `trade
 ## 12. Decisions
 
 See `docs/adr/`. ADR 0001 language split, ADR 0002 MCP-only AI boundary,
-ADR 0003 paper money only, ADR 0004 chief/worker worktree workflow.
+ADR 0003 paper money only, ADR 0004 chief/worker worktree workflow,
+ADR 0005 no hosted CI.

@@ -202,4 +202,4 @@ disables hooks.
 | Worker's checks "pass" but review shows otherwise | Reject, record the discrepancy in the report to the human, re-brief with explicit commands to paste output from. |
 | Worker goes quiet | `read_pane` to inspect; if stuck on a permission prompt, the human answers it in that pane. |
 | Push rejected (non-fast-forward) | Worker rebases (§4.4) and pushes again. Never force. |
-| CI red on `main` | Chief opens `fix/ci-<slug>`, fixes, merges. `main` red is a stop-the-line event. |
+| `make check`/`make test` red on `main` | Chief opens `fix/<scope>-<slug>`, fixes, merges. `main` red is a stop-the-line event; there is no hosted CI to catch it (ADR 0005). |
