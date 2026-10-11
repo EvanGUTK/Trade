@@ -1,0 +1,80 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      engine: ${{ steps.f.outputs.engine }}
+      gateway: ${{ steps.f.outputs.gateway }}
+      python: ${{ steps.f.outputs.python }}
+      web: ${{ steps.f.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: f
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            engine: ['engine/**', 'Makefile']
+            gateway: ['gateway/**', 'Makefile']
+            python: ['strategies/**', 'mcp/**', 'trader/**', 'Makefile']
+            web: ['web/**', 'Makefile']
+
+  engine:
+    needs: changes
+    if: needs.changes.outputs.engine == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: test -f engine/Makefile || { echo "engine not scaffolded"; exit 0; }
+      - uses: ocaml/setup-ocaml@v3
+        with: { ocaml-compiler: "5.3" }
+      - run: make engine-setup && make engine-check && make engine-test
+
+  gateway:
+    needs: changes
+    if: needs.changes.outputs.gateway == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: test -f gateway/Makefile || { echo "gateway not scaffolded"; exit 0; }
+      - uses: dtolnay/rust-toolchain@stable
+        with: { components: "rustfmt, clippy" }
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: gateway }
+      - run: make gateway-check && make gateway-test
+
+  python:
+    needs: changes
+    if: needs.changes.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.14" }
+      - run: |
+          for c in strategies mcp trader; do
+            [ -f $c/Makefile ] && make $c-setup && make $c-check && make $c-test || echo "$c not scaffolded"
+          done
+
+  web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: test -f web/Makefile || { echo "web not scaffolded"; exit 0; }
+      - uses: pnpm/action-setup@v4
+        with: { version: 12 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm, cache-dependency-path: web/pnpm-lock.yaml }
+      - run: make web-setup && make web-check && make web-test
