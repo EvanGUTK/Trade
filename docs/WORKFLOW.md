@@ -121,7 +121,7 @@ Make one logical change, verify it (build/tests/format), commit it, repeat.
 cd "$WORKTREE" && git add -A -- <paths in scope> && git commit -q -F - <<'MSG'
 feat(engine): add dune scaffold with hello binary
 
-Why: gives CI and the CLAUDE.md a real `dune build` target to verify against.
+Why: gives the review and the CLAUDE.md a real `dune build` target to verify against.
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 MSG
