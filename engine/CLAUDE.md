@@ -76,7 +76,6 @@ engine/
 | ocamlformat | 0.29.0 | must equal `version` in `.ocamlformat` |
 | yojson | 3.0.0 | only JSON library allowed |
 | alcotest | 1.9.1 | test framework |
-| CI compiler | 5.3 | `ocaml/setup-ocaml@v3` in `.github/workflows/ci.yml` |
 
 Setup once per switch: `make engine-setup` from the repo root (or `make setup` here)
 runs `opam install -y dune ocamlformat.0.29.0 yojson alcotest`. It never creates a
@@ -86,8 +85,9 @@ do not need `eval $(opam env)`. `dune-project` constrains `ocaml >= 5.0`. Bumpin
 ocamlformat touches `.ocamlformat`, `OPAM_PKGS`, and the table above in one commit;
 adding a library touches `OPAM_PKGS`, `dune-project` `depends`, and a `dune` file.
 
-CI: the `engine` job runs when `engine/**` or the root Makefile changes, as
-`make engine-setup && make engine-check && make engine-test`.
+There is no hosted CI (ADR 0005, `docs/adr/0005-no-hosted-ci.md`): the chief reruns
+`make engine-check` and `make engine-test` in your worktree through
+`scripts/review-branch.sh` before merging, so run them yourself before every push.
 
 ## 4. Commands
 
@@ -319,7 +319,7 @@ Root §8 plus:
       ledger, the §6 invariant tests still pass.
 - [ ] Determinism preserved: no `Random.self_init`, `Unix.time`, `Sys.time`, or
       `Hashtbl` iteration order in anything that reaches the event log.
-- [ ] The report lists the exact commands run, and in which switch (local 5.4.1 or CI 5.3).
+- [ ] The report lists the exact commands run and the opam switch they ran in.
 
 ## 11. Phase plan
 
@@ -345,5 +345,5 @@ Root §10 for the engine:
 
 Every §4 command was run on 2026-10-10 in the `default` switch (OCaml 5.4.1, dune
 3.24.2, ocamlformat 0.29.0, yojson 3.0.0, alcotest 1.9.1): `make check` passes, `make
-test` runs 17 tests green, the §4 smoke test printed the line shown. CI (OCaml 5.3)
-had not yet run on this branch when this was written.
+test` runs 17 tests green, the §4 smoke test printed the line shown. No other compiler
+has been tried; there is no hosted CI (ADR 0005), so the chief's review is the rerun.
