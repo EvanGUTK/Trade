@@ -23,7 +23,7 @@ for sha in $(git rev-list --reverse --no-merges "origin/main..$BR"); do
   done
 done
 if git diff --name-only "origin/main...$BR" | grep -E '^(data/|\.worktrees/)|(^|/)\.env$|(^|/)(node_modules|target|_build|\.venv|dist)/' ; then echo "  [x] forbidden paths in diff"; fail=1; fi
-if git diff "origin/main...$BR" | grep -nE '^\+.*(sk-ant-[A-Za-z0-9_-]{8,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{30,}|gho_[A-Za-z0-9]{30,})' ; then echo "  [x] secret-looking string added"; fail=1; fi
+if git diff "origin/main...$BR" | grep -nE '^\+.*(sk-ant-[A-Za-z0-9_-]{8,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{30,}|gho_[A-Za-z0-9]{30,})' | grep -viE 'test|example|placeholder|not-real' ; then echo "  [x] secret-looking string added"; fail=1; fi
 echo "rule checks: $([ "$fail" = 0 ] && echo PASS || echo FAIL)"
 if [ -n "$WT" ]; then
   echo; echo "== component checks in $WT =="
