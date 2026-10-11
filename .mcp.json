@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "trade": {
+      "command": "uv",
+      "args": ["run", "--project", "mcp", "python", "-m", "trade_mcp", "--transport", "stdio"]
+    }
+  }
+}
