@@ -1,0 +1,16 @@
+(lang dune 3.17)
+
+(name trade_engine)
+
+(generate_opam_files false)
+
+(package
+ (name trade_engine)
+ (synopsis
+  "Trade deterministic simulation engine: paper broker over JSON-RPC stdio")
+ (depends
+  (ocaml
+   (>= 5.0))
+  dune
+  yojson
+  (alcotest :with-test)))

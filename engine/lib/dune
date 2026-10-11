@@ -1,0 +1,4 @@
+(library
+ (name trade_engine)
+ (public_name trade_engine)
+ (libraries yojson))

@@ -1,0 +1,5 @@
+(executable
+ (name main)
+ (public_name trade_engine)
+ (package trade_engine)
+ (libraries trade_engine))
