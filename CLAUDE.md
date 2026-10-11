@@ -154,8 +154,10 @@ The protocol is fully specified in `docs/WORKFLOW.md`. The short version:
 tests on its own, message in Conventional Commits form (§6). A worker that touched
 a manifest and wrote docs makes two commits, not one.
 
-**Panes**: the chief can read a worker's live terminal with the Paneflow
-`read_pane` tool to check progress without interrupting it.
+**Panes**: workers run in their own Paneflow panes when the chief runs as a team
+pane or Paneflow was started with `PANEFLOW_IPC_ORCHESTRATION=1`; otherwise the
+chief runs them headless with `.claude/panes/run-worker.sh`. Launch modes, gates,
+and monitoring commands: `docs/WORKFLOW.md` §6 and `.claude/panes/README.md`.
 
 ---
 
