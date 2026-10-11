@@ -1,0 +1,134 @@
+/* Shell layout. Tokens come from theme.css; nothing here hard-codes a colour. */
+
+.shell {
+  display: grid;
+  grid-template-rows: var(--topbar-h) 1fr;
+  height: 100%;
+  background: var(--bg-0);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  padding: 0 var(--gap-3);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar__brand {
+  font-size: var(--fs-lg);
+  letter-spacing: 0.02em;
+}
+
+.topbar__note {
+  font-size: var(--fs-xs);
+  margin-right: auto;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-1);
+  padding: 2px var(--gap-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  background: var(--bg-2);
+}
+
+.status-pill__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.status-pill[data-state='up'] .status-pill__dot {
+  background: var(--up);
+}
+
+.status-pill[data-state='down'] .status-pill__dot {
+  background: var(--down);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: var(--col-left) minmax(0, 1fr) var(--col-right);
+  min-height: 0;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg-1);
+}
+
+.col--left {
+  border-right: 1px solid var(--border);
+  padding: var(--gap-3);
+}
+
+.col--right {
+  border-left: 1px solid var(--border);
+  gap: 1px;
+  background: var(--border);
+}
+
+.col--right .panel {
+  background: var(--bg-1);
+  padding: var(--gap-3);
+}
+
+.col--center {
+  background: var(--bg-0);
+}
+
+.col--center .panel {
+  flex: 1;
+  min-height: 0;
+  padding: var(--gap-3);
+}
+
+.tabs {
+  display: flex;
+  height: var(--tabs-h);
+  border-top: 1px solid var(--border);
+  background: var(--bg-1);
+}
+
+.tabs__tab {
+  height: 100%;
+  padding: 0 var(--gap-4);
+  border-radius: 0;
+  color: var(--text-muted);
+  border-top: 2px solid transparent;
+}
+
+.tabs__tab:hover {
+  color: var(--text);
+  background: var(--bg-2);
+}
+
+.tabs__tab[aria-selected='true'] {
+  color: var(--text);
+  border-top-color: var(--accent);
+}
+
+.placeholder {
+  margin: var(--gap-2) 0 0;
+  font-size: var(--fs-sm);
+}
+
+/* Tablet: the watchlist collapses; the ticket column stays. */
+@media (max-width: 1024px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr) var(--col-right);
+  }
+
+  .col--left {
+    display: none;
+  }
+}
