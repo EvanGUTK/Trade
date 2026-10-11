@@ -60,6 +60,10 @@ git diff --stat origin/main...feat/<scope>-<slug>
 git diff origin/main...feat/<scope>-<slug>
 cd .worktrees/<task> && make check && make test     # or the component targets
 ```
+`scripts/review-branch.sh <branch> <scope-dirs> [worktree]` runs the mechanical
+checks below (commit format, footer, scope, forbidden paths, secrets, component
+checks). The chief still reads every diff.
+
 Review checklist (every item must be true):
 - Each commit is one logical change with a Conventional message and the attribution footer.
 - Each commit builds on its own (`git rebase -x "make <component>-build" origin/main` in the worktree if in doubt).
