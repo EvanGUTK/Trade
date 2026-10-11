@@ -1,0 +1,49 @@
+[project]
+name = "trade-mcp"
+version = "0.1.0"
+description = "MCP server exposing the Trade paper-money simulator as tools, resources, and prompts."
+requires-python = ">=3.14"
+dependencies = [
+  "mcp>=1.20",
+  "pydantic>=2.11",
+]
+
+[dependency-groups]
+dev = [
+  "mypy>=1.18",
+  "pytest>=8.4",
+  "pytest-asyncio>=1.0",
+  "ruff>=0.13",
+]
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "trade_mcp"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "A", "C4", "SIM", "PT", "ANN", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["trade_mcp"]
+
+[tool.mypy]
+strict = true
+python_version = "3.14"
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

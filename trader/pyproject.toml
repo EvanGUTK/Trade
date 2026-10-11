@@ -1,0 +1,50 @@
+[project]
+name = "trade-trader"
+version = "0.1.0"
+description = "The Trader: a separate Claude agent that writes and reviews paper-money strategies over MCP."
+requires-python = ">=3.14"
+dependencies = [
+  "anthropic>=1.0,<2",
+  "pydantic>=2.11",
+  "pydantic-settings>=2.10",
+]
+
+[dependency-groups]
+dev = [
+  "mypy>=1.18",
+  "pytest>=8.4",
+  "pytest-asyncio>=1.0",
+  "ruff>=0.13",
+]
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "trade_trader"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "A", "C4", "SIM", "PT", "ANN", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["trade_trader"]
+
+[tool.mypy]
+strict = true
+python_version = "3.14"
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
