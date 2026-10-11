@@ -85,10 +85,11 @@ Reviewed-by: chief
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 make check && make test
 git push origin main
+git worktree remove .worktrees/<task>          # first: a branch checked out in a worktree cannot be deleted
 git branch -d feat/<scope>-<slug>
 git push origin --delete feat/<scope>-<slug>
-git worktree remove .worktrees/<task>
 ```
+`git merge -F` needs a file, not `-`; write the message to a file (or use `-m`).
 Merge order: least dependent first (`docs` → `engine` → `gateway` → `strategies` →
 `mcp` → `trader` → `web`). After each merge, workers still running must rebase
 before their next push (they do this anyway, §4.3).
