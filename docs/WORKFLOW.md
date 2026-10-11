@@ -10,12 +10,12 @@ Worktrees live under `.worktrees/` inside the repo (gitignored).
 
 ## 1. Roles
 
-| Role | Who | May |
-|---|---|---|
-| Human | the person at the keyboard | anything; decides scope and promotions |
-| Chief | the Claude Code session in the main pane | provision worktrees, spawn workers, review, merge to `main`, push `main`, delete branches |
-| Worker | an agent the chief spawns (`.claude/agents/*-worker.md`) | edit inside its worktree, commit to its branch, rebase on `origin/main`, push its branch, report |
-| Reviewer | optional read-only agent (`.claude/agents/reviewer.md`) | read a branch, run checks, report findings; no writes |
+| Role | Who | Model | May |
+|---|---|---|---|
+| Human | the person at the keyboard | — | anything; decides scope and promotions |
+| Chief | the Claude Code session in the main (team) pane | Claude Fable 5.1 (`claude-fable-5-1`), orchestration only | provision worktrees, spawn workers, review, merge to `main`, push `main`, delete branches |
+| Worker | an agent the chief spawns (`.claude/agents/*-worker.md`) | Claude Sonnet 5.5 (`claude-sonnet-5-5`), effort high; Opus 5.5 xhigh only for a hard feature the chief names | edit inside its worktree, commit to its branch, push its branch, report |
+| Reviewer | optional read-only agent (`.claude/agents/reviewer.md`) | Claude Opus 5.5 (`claude-opus-5-5`) | read a branch, run checks, report findings; no writes |
 
 Nobody but the chief writes to `main`. Nobody force-pushes anything, ever.
 
@@ -46,6 +46,13 @@ worktree.
 Spawn the matching worker agent with the brief, the absolute worktree path, and the
 branch name. Spawn independent workers in the same turn so they run in parallel.
 Do not edit files in a worker's worktree while it runs.
+
+Model and effort (root `CLAUDE.md` §5 "Models"): Agent tool `model: "sonnet"`,
+`effort: "high"` for every normal task; `model: "opus"`, `effort: "xhigh"` only for a
+hard feature, with the reason written in the brief; the `reviewer` agent runs with
+`model: "opus"`. Pane and headless launches go through `.claude/panes/run-worker.sh`,
+which passes `--model claude-sonnet-5-5 --effort high` unless `WORKER_MODEL` /
+`WORKER_EFFORT` override it.
 
 ### 3.4 Monitor
 Use Paneflow `list_panes` / `read_pane` to look at a worker's terminal if it is
@@ -111,7 +118,7 @@ Read, in order: root `CLAUDE.md`, `docs/ARCHITECTURE.md`, your component's
 and `git -C "$WORKTREE" branch --show-current` equals `BRANCH`. If anything is off,
 stop and report.
 
-### 4.2 Pull
+### 4.2 Pull (only while nothing is pushed yet)
 ```bash
 cd "$WORKTREE" && git fetch origin && git rebase origin/main
 ```
@@ -132,11 +139,17 @@ fail `make <component>-build`; no amending or rebasing commits that are already
 pushed; no touching files outside your component unless the brief allows it.
 
 ### 4.4 Push
+First push (nothing on the remote yet):
 ```bash
 cd "$WORKTREE" && git fetch origin && git rebase origin/main && make check && make test && git push -u origin "$BRANCH"
 ```
-If the rebase conflicts, resolve inside your component, `git rebase --continue`,
-rerun checks, then push. If the conflict is outside your component, stop and report.
+Later pushes: **never rebase again**. Rebasing rewrites commits the remote already
+has, and force-push is forbidden. Run `make check && make test && git push`. If
+`origin/main` moved and you need its changes, `git merge origin/main` into your branch
+(a merge commit on a worker branch is fine; the chief's `--no-ff` merge absorbs it).
+If a rebase before the first push conflicts, resolve inside your component,
+`git rebase --continue`, rerun checks, then push. A conflict outside your component:
+stop and report.
 
 ### 4.5 Report
 End with exactly this shape:

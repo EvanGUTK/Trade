@@ -100,10 +100,10 @@ Versions verified on the dev machine on 2026-10-10. Pin to these in manifests.
 
 | Tool | Version | Install hint |
 |---|---|---|
-| OCaml / opam | 5.5.0 / 2.6.0 | `opam install dune ocamlformat yojson ppx_deriving alcotest` |
+| OCaml (opam `default` switch) / opam | 5.4.1 / 2.6.0 | dune 3.24.2, ocamlformat 0.29.0, yojson 3.0.0, alcotest 1.9.1 via `make engine-setup`; `/usr/bin/ocaml` 5.5.0 has no dune |
 | Rust / cargo | 1.99.0 | rustup stable |
-| Python / uv | 3.14.8 / 0.12.23 | `uv sync` in each Python dir |
-| Node / pnpm | 24.21 / 12.10 | `pnpm install` in `web/` |
+| Python / uv | 3.14.8 / 0.12.23 | `uv sync` in each Python dir; ruff 0.17, mypy 2.4, pytest 9 per `uv.lock` |
+| Node / pnpm | 24.21 / 12.10 | `pnpm install` in `web/`; TypeScript 6.0.x, Vite 8.3, React 19.3 |
 
 Top-level `Makefile` targets (each delegates to the component):
 
@@ -160,6 +160,25 @@ a manifest and wrote docs makes two commits, not one.
 pane or Paneflow was started with `PANEFLOW_IPC_ORCHESTRATION=1`; otherwise the
 chief runs them headless with `.claude/panes/run-worker.sh`. Launch modes, gates,
 and monitoring commands: `docs/WORKFLOW.md` §6 and `.claude/panes/README.md`.
+
+**Models** (the human's standing policy, 2026-10-11):
+- **Chief = Claude Fable 5.1** (`claude-fable-5-1`). It only orchestrates: triage,
+  briefs, worktrees, review, merge. When the human opens this repo as a Claude Code
+  team session, that session is the chief; it starts by reading `docs/HANDOFF.md`.
+- **Workers = Claude Sonnet 5.5** (`claude-sonnet-5-5`) at effort **high**. This is
+  the base model for every component task.
+- **Checking code and merges from worktrees = Claude Opus 5.5** (`claude-opus-5-5`)
+  through the `reviewer` agent, when the chief wants a second pair of eyes beyond
+  `scripts/review-branch.sh` and its own read of the diff.
+- **Hard features = Claude Opus 5.5 at effort xhigh**: cross-component or
+  protocol-changing work, or a task a Sonnet worker failed twice. The chief states
+  the reason in the brief. Everything else stays on Sonnet 5.5 high.
+- Spawn flags: Agent tool `model: "sonnet"`, `effort: "high"` (hard feature:
+  `model: "opus"`, `effort: "xhigh"`; reviewer: `model: "opus"`). Pane or headless
+  launches: `.claude/panes/run-worker.sh` passes `--model claude-sonnet-5-5
+  --effort high` by default; override with `WORKER_MODEL` and `WORKER_EFFORT`.
+- The in-app Trader agent (§7) is a product component, not a dev worker; it stays
+  on `claude-opus-5-5` regardless of this policy.
 
 ---
 

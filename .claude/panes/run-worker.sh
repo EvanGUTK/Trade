@@ -16,10 +16,12 @@ COMMON="$ROOT/.claude/panes/briefs/_common.md"
 [ -f "$BRIEF" ] || { echo "no brief at $BRIEF"; exit 1; }
 PROMPT="$(cat "$BRIEF"; echo; echo '---'; cat "$COMMON")"
 TOOLS="Bash,Read,Write,Edit,Glob,Grep,Skill,ToolSearch"
+MODEL="${WORKER_MODEL:-claude-sonnet-5-5}"   # root CLAUDE.md §5 "Models": workers on Sonnet 5.5
+EFFORT="${WORKER_EFFORT:-high}"              # opus + xhigh only for a hard feature the chief names
 cd "$WT" || exit 1
 if [ "$MODE" = "--headless" ]; then
-  exec claude -p --permission-mode acceptEdits --allowedTools "$TOOLS" --max-turns 250 --output-format text "$PROMPT" < /dev/null
+  exec claude -p --model "$MODEL" --effort "$EFFORT" --permission-mode acceptEdits --allowedTools "$TOOLS" --max-turns 250 --output-format text "$PROMPT" < /dev/null
 fi
-claude --permission-mode acceptEdits --allowedTools "$TOOLS" "$PROMPT"
+claude --model "$MODEL" --effort "$EFFORT" --permission-mode acceptEdits --allowedTools "$TOOLS" "$PROMPT"
 echo; echo "[$NAME worker] claude exited ($?). Pane kept open for inspection."
 exec bash
