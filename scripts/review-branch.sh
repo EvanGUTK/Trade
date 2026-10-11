@@ -29,7 +29,7 @@ if [ -n "$WT" ]; then
   echo; echo "== component checks in $WT =="
   for s in "${sc[@]}"; do
     if [ -f "$WT/$s/Makefile" ]; then
-      (cd "$WT" && make "$s-check" && make "$s-test") || { echo "  [x] $s check/test failed"; fail=1; }
+      (cd "$WT/$s" && make check && make test) || { echo "  [x] $s check/test failed"; fail=1; }
     else echo "  [-] $s has no Makefile"; fi
   done
 fi
