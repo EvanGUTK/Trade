@@ -1,0 +1,31 @@
+# Paneflow workspace spec: one interactive worker pane per component.
+#   paneflow up --dry-run .claude/panes/workers.toml   # validate
+#   paneflow up .claude/panes/workers.toml             # needs Paneflow started with PANEFLOW_IPC_ORCHESTRATION=1
+# The chief provisions .worktrees/<name> and writes briefs/<name>.md before running this.
+# Paths are absolute because Paneflow resolves them outside the repo.
+name = "Trade workers"
+layout = "tiled"
+
+[[panes]]
+name = "engine-worker"
+cwd = "/home/usaas/Projects/Panes/Trade/.worktrees/engine"
+command = "bash /home/usaas/Projects/Panes/Trade/.claude/panes/run-worker.sh engine"
+focus = false
+
+[[panes]]
+name = "gateway-worker"
+cwd = "/home/usaas/Projects/Panes/Trade/.worktrees/gateway"
+command = "bash /home/usaas/Projects/Panes/Trade/.claude/panes/run-worker.sh gateway"
+focus = false
+
+[[panes]]
+name = "python-worker"
+cwd = "/home/usaas/Projects/Panes/Trade/.worktrees/python"
+command = "bash /home/usaas/Projects/Panes/Trade/.claude/panes/run-worker.sh python"
+focus = false
+
+[[panes]]
+name = "web-worker"
+cwd = "/home/usaas/Projects/Panes/Trade/.worktrees/web"
+command = "bash /home/usaas/Projects/Panes/Trade/.claude/panes/run-worker.sh web"
+focus = false

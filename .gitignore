@@ -43,3 +43,8 @@ web/dist/
 
 # Claude Code local overrides
 .claude/settings.local.json
+
+# per-task worker briefs are ephemeral; keep the shared rules and the template
+.claude/panes/briefs/*
+!.claude/panes/briefs/_common.md
+!.claude/panes/briefs/TEMPLATE.md
