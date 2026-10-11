@@ -1,0 +1,4 @@
+(test
+ (name test_trade_engine)
+ (package trade_engine)
+ (libraries trade_engine alcotest yojson))
