@@ -1,0 +1,45 @@
+# worktrees for worker agents (see docs/WORKFLOW.md)
+.worktrees/
+
+# secrets / local env
+.env
+.env.*
+!.env.example
+
+# runtime data
+data/
+*.db
+*.db-journal
+*.sqlite
+
+# OCaml
+_build/
+_opam/
+*.install
+
+# Rust
+target/
+Cargo.lock.bak
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+
+# Node
+node_modules/
+web/dist/
+.vite/
+
+# editors / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Claude Code local overrides
+.claude/settings.local.json
