@@ -5,7 +5,7 @@ CARGO ?= cargo
 
 .PHONY: setup build check test fmt run clean
 
-setup: ## install rustfmt + clippy (best-effort; CI installs them via dtolnay/rust-toolchain)
+setup: ## install rustfmt + clippy (best-effort)
 	-rustup component add rustfmt clippy
 
 build: ## compile the gateway binary and library

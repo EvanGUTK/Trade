@@ -64,10 +64,9 @@ gateway/
 |---|---|---|
 | rustc / cargo | 1.99 stable | `rust-version = "1.99"` in `Cargo.toml`; edition 2024 |
 | rustfmt, clippy | from rustup | `make setup` runs `rustup component add rustfmt clippy` (best-effort, `-` prefixed) |
-| CI | `.github/workflows/ci.yml` job `gateway` | `dtolnay/rust-toolchain@stable` with `components: rustfmt, clippy`, `Swatinem/rust-cache@v2` with `workspaces: gateway`, then `make gateway-check && make gateway-test` |
 
-Path filter: the job runs only when `gateway/**` or the root `Makefile` changes.
-No system packages are needed today; adding `sqlx`/`reqwest` with rustls keeps it so.
+There is no hosted CI (ADR 0005): the chief runs `make check` and `make test`
+in the worktree during review. No system packages are needed today; adding `sqlx`/`reqwest` with rustls keeps it so.
 
 ## 4. Commands
 
@@ -79,7 +78,7 @@ instead of silently rewriting it.
 |---|---|---|
 | `setup` | `rustup component add rustfmt clippy` | once per machine |
 | `build` | `cargo build --locked` | compile lib + bin |
-| `check` | `cargo fmt --all -- --check` then `cargo clippy --all-targets --locked -- -D warnings` | before every commit; CI runs it |
+| `check` | `cargo fmt --all -- --check` then `cargo clippy --all-targets --locked -- -D warnings` | before every commit; the chief reruns it in review |
 | `test` | `cargo test --locked` | unit tests in `src/`, contract tests in `tests/`, doctests |
 | `fmt` | `cargo fmt --all` | fix what `check` reported |
 | `run` | `cargo run --locked` | serve on `127.0.0.1:${TRADE_GATEWAY_PORT:-8787}`; `RUST_LOG=debug` for more |
@@ -227,7 +226,7 @@ pub trait MarketData: Send + Sync {
 ## 8. Persistence (planned)
 
 - Engine: `sqlx` (`sqlite`, `runtime-tokio`, `migrate`), runtime `sqlx::query()` only,
-  no `query!` macros, so CI needs no database. Path: `${TRADE_DATA_DIR:-./data}/trade.db`,
+  no `query!` macros, so building needs no database. Path: `${TRADE_DATA_DIR:-./data}/trade.db`,
   created on first run. Pragmas at open: `journal_mode=WAL`, `synchronous=NORMAL`,
   `foreign_keys=ON`, `busy_timeout=5000`.
 - Migrations: `migrations/NNNN_slug.sql`, embedded with `sqlx::migrate!()`, applied
